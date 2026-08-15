@@ -1,5 +1,9 @@
 # FortressLab POC Foundation Implementation Plan
 
+**Status:** Completed on `main` on 2026-08-15. All nine tasks and the milestone
+acceptance gate were executed; the resulting implementation is recorded in the
+repository history.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Build the first usable FortressLab vertical slice: an installable headless Python package that strictly validates a versioned scenario, emits a canonical immutable snapshot, and derives a reproducible run manifest.
@@ -82,7 +86,7 @@ This foundation is accepted when:
 - Consumes: CPython 3.14.4 and uv available on the host.
 - Produces: importable `fortresslab` package exposing `__version__: str` and `MODEL_VERSION: str`.
 
-- [ ] **Step 1: Write the failing package-contract test**
+- [x] **Step 1: Write the failing package-contract test**
 
 ```python
 from fortresslab import MODEL_VERSION, __version__
@@ -95,13 +99,13 @@ def test_package_exposes_independent_package_and_model_versions() -> None:
 
 This catches a missing package boundary or accidental coupling between install-package versioning and evaluator-model versioning.
 
-- [ ] **Step 2: Run the test and verify the red state**
+- [x] **Step 2: Run the test and verify the red state**
 
 Run: `python3 -m pytest tests/unit/test_package.py -v`
 
 Expected: collection fails with `ModuleNotFoundError: No module named 'fortresslab'`.
 
-- [ ] **Step 3: Create the minimal package and tool configuration**
+- [x] **Step 3: Create the minimal package and tool configuration**
 
 `.python-version`:
 
@@ -210,7 +214,7 @@ uv run mypy
 ~~~
 ```
 
-- [ ] **Step 4: Lock dependencies and verify the green state**
+- [x] **Step 4: Lock dependencies and verify the green state**
 
 Run:
 
@@ -224,7 +228,7 @@ uv run mypy
 
 Expected: one test passes; lint and type checks exit 0.
 
-- [ ] **Step 5: Commit the package foundation**
+- [x] **Step 5: Commit the package foundation**
 
 ```bash
 git add .python-version .gitignore pyproject.toml uv.lock README.md src/fortresslab/__init__.py tests/__init__.py tests/unit/test_package.py
@@ -245,7 +249,7 @@ git commit -m "build: bootstrap FortressLab Python package"
 - Consumes: Pydantic 2 strict validation.
 - Produces: `StrictModel`, `Identifier`, `PositiveMetres`, `NonNegativeMetres`, `PositiveScalar`, `NonNegativeScalar`, `UnitInterval`, `Degrees`, `Point2D`, `Point3D`, and `Polygon2D`.
 
-- [ ] **Step 1: Write failing strictness and primitive tests**
+- [x] **Step 1: Write failing strictness and primitive tests**
 
 ```python
 import pytest
@@ -293,13 +297,13 @@ def test_polygon_requires_three_distinct_unclosed_vertices() -> None:
 
 The tests catch permissive coercion, hidden extra inputs, non-finite spatial state, mutation of validated snapshots, and degenerate polygon boundaries.
 
-- [ ] **Step 2: Run the tests and verify the red state**
+- [x] **Step 2: Run the tests and verify the red state**
 
 Run: `uv run pytest tests/unit/schema/test_primitives.py -v`
 
 Expected: collection fails because `fortresslab.schema` does not exist.
 
-- [ ] **Step 3: Implement the strict base and primitives**
+- [x] **Step 3: Implement the strict base and primitives**
 
 `src/fortresslab/schema/base.py`:
 
@@ -369,7 +373,7 @@ class Polygon2D(StrictModel):
 
 `src/fortresslab/schema/__init__.py` exports only the stable names above. Do not re-export every concrete scenario type from the package root.
 
-- [ ] **Step 4: Run focused and full verification**
+- [x] **Step 4: Run focused and full verification**
 
 Run:
 
@@ -382,7 +386,7 @@ uv run mypy
 
 Expected: all commands exit 0.
 
-- [ ] **Step 5: Commit strict schema primitives**
+- [x] **Step 5: Commit strict schema primitives**
 
 ```bash
 git add src/fortresslab/schema tests/unit/schema/test_primitives.py
@@ -401,7 +405,7 @@ git commit -m "feat: add strict schema primitives"
 - Consumes: `Identifier`, `PositiveMetres`, `PositiveScalar`, `UnitInterval`, `Point2D`, and `Polygon2D`.
 - Produces: `HeightField`, `SoilDefinition`, `SoilRegion`, `WaterRegion`, and `TerrainDefinition`.
 
-- [ ] **Step 1: Write failing terrain-schema tests**
+- [x] **Step 1: Write failing terrain-schema tests**
 
 ```python
 import pytest
@@ -460,13 +464,13 @@ def test_polygon_schema_does_not_claim_self_intersection_analysis() -> None:
 
 The final test preserves the milestone boundary: schema shape validation must not masquerade as the exact geometry layer planned for stage 2.
 
-- [ ] **Step 2: Run the tests and verify the red state**
+- [x] **Step 2: Run the tests and verify the red state**
 
 Run: `uv run pytest tests/unit/schema/test_terrain.py -v`
 
 Expected: collection fails because `fortresslab.schema.terrain` does not exist.
 
-- [ ] **Step 3: Implement terrain input models and local references**
+- [x] **Step 3: Implement terrain input models and local references**
 
 ```python
 from pydantic import Field, field_validator, model_validator
@@ -545,7 +549,7 @@ class TerrainDefinition(StrictModel):
 The dimensionless `PositiveScalar` alias prevents a semantically wrong unit
 from entering `traversability_multiplier`.
 
-- [ ] **Step 4: Run focused and full verification**
+- [x] **Step 4: Run focused and full verification**
 
 Run:
 
@@ -558,7 +562,7 @@ uv run mypy
 
 Expected: all commands exit 0.
 
-- [ ] **Step 5: Commit terrain schemas**
+- [x] **Step 5: Commit terrain schemas**
 
 ```bash
 git add src/fortresslab/schema/base.py src/fortresslab/schema/terrain.py tests/unit/schema/test_terrain.py
@@ -577,7 +581,7 @@ git commit -m "feat: define terrain input schema"
 - Consumes: strict scalar aliases, points, and polygons.
 - Produces: `MaterialDefinition`, `Wall`, `Tower`, `Gate`, `Ditch`, `Bridge`, and discriminated `Fortification`.
 
-- [ ] **Step 1: Write failing discriminated-union and boundary tests**
+- [x] **Step 1: Write failing discriminated-union and boundary tests**
 
 ```python
 import pytest
@@ -632,13 +636,13 @@ def test_gate_rejects_non_positive_width() -> None:
         )
 ```
 
-- [ ] **Step 2: Run the tests and verify the red state**
+- [x] **Step 2: Run the tests and verify the red state**
 
 Run: `uv run pytest tests/unit/schema/test_fortifications.py -v`
 
 Expected: collection fails because `fortresslab.schema.fortifications` does not exist.
 
-- [ ] **Step 3: Implement the fortification union**
+- [x] **Step 3: Implement the fortification union**
 
 ```python
 from typing import Annotated, Literal, TypeAlias
@@ -751,7 +755,7 @@ Fortification: TypeAlias = Annotated[
 These checks validate declared structure only; intersection and terrain
 compatibility remain stage-2 geometry work.
 
-- [ ] **Step 4: Run focused and full verification**
+- [x] **Step 4: Run focused and full verification**
 
 Run:
 
@@ -764,7 +768,7 @@ uv run mypy
 
 Expected: all commands exit 0.
 
-- [ ] **Step 5: Commit fortification schemas**
+- [x] **Step 5: Commit fortification schemas**
 
 ```bash
 git add src/fortresslab/schema/fortifications.py tests/unit/schema/test_fortifications.py
@@ -783,7 +787,7 @@ git commit -m "feat: define fortification input schema"
 - Consumes: identifiers, strict numeric aliases, `Point3D`.
 - Produces: `Objective`, `WeaponEnvelope`, `DefensivePosition`, `Observer`, `MovementCapabilities`, `EngineeringCapabilities`, `AttackerProfile`, and `EvaluationSettings`.
 
-- [ ] **Step 1: Write failing capability-boundary tests**
+- [x] **Step 1: Write failing capability-boundary tests**
 
 ```python
 import pytest
@@ -822,13 +826,13 @@ def test_evaluation_seed_is_unsigned_64_bit() -> None:
     assert EvaluationSettings(seed=2**64 - 1).seed == 2**64 - 1
 ```
 
-- [ ] **Step 2: Run the tests and verify the red state**
+- [x] **Step 2: Run the tests and verify the red state**
 
 Run: `uv run pytest tests/unit/schema/test_operations.py -v`
 
 Expected: collection fails because `fortresslab.schema.operations` does not exist.
 
-- [ ] **Step 3: Implement operational input models**
+- [x] **Step 3: Implement operational input models**
 
 ```python
 from typing import Literal
@@ -933,7 +937,7 @@ class EvaluationSettings(StrictModel):
 
 These models describe capacities and potential defensive positions. They do not contain soldier counts, combat resolution, casualties, morale, fatigue, or commander behaviour.
 
-- [ ] **Step 4: Run focused and full verification**
+- [x] **Step 4: Run focused and full verification**
 
 Run:
 
@@ -946,7 +950,7 @@ uv run mypy
 
 Expected: all commands exit 0.
 
-- [ ] **Step 5: Commit operational schemas**
+- [x] **Step 5: Commit operational schemas**
 
 ```bash
 git add src/fortresslab/schema/operations.py tests/unit/schema/test_operations.py
@@ -966,7 +970,7 @@ git commit -m "feat: define POC operational inputs"
 - Consumes: all stage-1 input models.
 - Produces: `Scenario` with `Scenario.model_validate_json(payload) -> Scenario` and frozen, validated cross-references.
 
-- [ ] **Step 1: Create a valid test factory and failing cross-reference tests**
+- [x] **Step 1: Create a valid test factory and failing cross-reference tests**
 
 `tests/factories.py`:
 
@@ -1178,13 +1182,13 @@ def test_material_reference_must_exist() -> None:
 
 The expected paths are hand-authored. The tests fail if validation disappears, points at the wrong record, or accepts scenario-authored evaluator hints.
 
-- [ ] **Step 2: Run the tests and verify the red state**
+- [x] **Step 2: Run the tests and verify the red state**
 
 Run: `uv run pytest tests/unit/schema/test_scenario.py -v`
 
 Expected: collection fails because `fortresslab.schema.scenario` does not exist.
 
-- [ ] **Step 3: Implement the aggregate scenario model**
+- [x] **Step 3: Implement the aggregate scenario model**
 
 ```python
 from typing import Literal
@@ -1272,7 +1276,7 @@ class Scenario(StrictModel):
 
 Do not add containment, intersection, wall continuity, bridge connectivity, or objective reachability here. Those checks depend on exact geometry and semantic graphs and belong to their respective milestones.
 
-- [ ] **Step 4: Run focused and full verification**
+- [x] **Step 4: Run focused and full verification**
 
 Run:
 
@@ -1285,7 +1289,7 @@ uv run mypy
 
 Expected: all commands exit 0.
 
-- [ ] **Step 5: Commit the scenario aggregate**
+- [x] **Step 5: Commit the scenario aggregate**
 
 ```bash
 git add src/fortresslab/schema/scenario.py tests/factories.py tests/unit/schema/test_scenario.py
@@ -1306,7 +1310,7 @@ git commit -m "feat: validate versioned scenarios"
 - Consumes: a Pydantic `BaseModel` or JSON-compatible value.
 - Produces: `canonical_json_bytes(value) -> bytes` and `content_sha256(value) -> str`.
 
-- [ ] **Step 1: Write failing example and property tests**
+- [x] **Step 1: Write failing example and property tests**
 
 `tests/unit/test_serialization.py`:
 
@@ -1438,7 +1442,7 @@ def valid_scenarios(draw: st.DrawFn) -> Scenario:
 All constraints are embedded in the strategies; there is no `assume()`
 filtering.
 
-- [ ] **Step 2: Run the tests and verify the red state**
+- [x] **Step 2: Run the tests and verify the red state**
 
 Run:
 
@@ -1448,7 +1452,7 @@ uv run pytest tests/unit/test_serialization.py tests/properties/test_scenario_ro
 
 Expected: collection fails because `fortresslab.serialization` does not exist.
 
-- [ ] **Step 3: Implement canonical JSON and hashing**
+- [x] **Step 3: Implement canonical JSON and hashing**
 
 ```python
 import hashlib
@@ -1499,7 +1503,7 @@ def content_sha256(value: object) -> str:
     return hashlib.sha256(canonical_json_bytes(value)).hexdigest()
 ```
 
-- [ ] **Step 4: Run focused properties with statistics, then the full suite**
+- [x] **Step 4: Run focused properties with statistics, then the full suite**
 
 Run:
 
@@ -1513,7 +1517,7 @@ uv run mypy
 
 Expected: all commands exit 0; Hypothesis reports generated examples without filtering-health warnings.
 
-- [ ] **Step 5: Commit canonical serialization**
+- [x] **Step 5: Commit canonical serialization**
 
 ```bash
 git add src/fortresslab/serialization.py tests/strategies.py tests/unit/test_serialization.py tests/properties/test_scenario_roundtrip.py
@@ -1534,7 +1538,7 @@ git commit -m "feat: canonicalize scenario snapshots"
 - Consumes: `Scenario`, `RuntimeSnapshot`, UTC start/completion times.
 - Produces: `derive_run_id(scenario) -> str`, `create_run_manifest(...) -> RunManifest`, `complete_run_manifest(...) -> RunManifest`, and `collect_runtime_snapshot() -> RuntimeSnapshot`.
 
-- [ ] **Step 1: Write failing run-identity and lifecycle tests**
+- [x] **Step 1: Write failing run-identity and lifecycle tests**
 
 ```python
 from datetime import UTC, datetime, timedelta
@@ -1617,13 +1621,13 @@ def test_completion_precedes_start_is_rejected() -> None:
         complete_run_manifest(manifest, started - timedelta(seconds=1))
 ```
 
-- [ ] **Step 2: Run the tests and verify the red state**
+- [x] **Step 2: Run the tests and verify the red state**
 
 Run: `uv run pytest tests/unit/test_manifest.py -v`
 
 Expected: collection fails because the manifest modules do not exist.
 
-- [ ] **Step 3: Implement typed manifests and pure identity derivation**
+- [x] **Step 3: Implement typed manifests and pure identity derivation**
 
 `src/fortresslab/schema/manifest.py`:
 
@@ -1753,7 +1757,7 @@ def collect_runtime_snapshot() -> RuntimeSnapshot:
 
 `run_id` matches the identifier grammar because it starts with `run_` and contains lowercase hexadecimal. Runtime package versions are evidence, not identity inputs; model version is the behaviour-bearing identity input.
 
-- [ ] **Step 4: Test the real runtime adapter and full suite**
+- [x] **Step 4: Test the real runtime adapter and full suite**
 
 `tests/integration/test_runtime_snapshot.py`:
 
@@ -1786,7 +1790,7 @@ uv run mypy
 
 Expected: all commands exit 0.
 
-- [ ] **Step 5: Commit reproducible manifests**
+- [x] **Step 5: Commit reproducible manifests**
 
 ```bash
 git add src/fortresslab/schema/manifest.py src/fortresslab/manifest.py tests/unit/test_manifest.py tests/integration/test_runtime_snapshot.py
@@ -1812,7 +1816,7 @@ git commit -m "feat: derive reproducible run manifests"
 - Consumes: filesystem path to a JSON document.
 - Produces: `load_scenario(path) -> Scenario`, `validate_path(path) -> ValidationReport`, console command `fortresslab validate PATH [--json]`, exit 0 for valid and exit 2 for invalid/unreadable input.
 
-- [ ] **Step 1: Write failing loader and real-process CLI tests**
+- [x] **Step 1: Write failing loader and real-process CLI tests**
 
 `tests/unit/test_io.py`:
 
@@ -1888,7 +1892,7 @@ def test_validate_cli_returns_two_without_traceback_for_bad_json(
     assert report["issues"][0]["path"] == "$"
 ```
 
-- [ ] **Step 2: Run the tests and verify the red state**
+- [x] **Step 2: Run the tests and verify the red state**
 
 Run:
 
@@ -1898,7 +1902,7 @@ uv run pytest tests/unit/test_io.py tests/integration/test_validate_cli.py -v
 
 Expected: collection fails because `fortresslab.io` and the example scenario do not exist.
 
-- [ ] **Step 3: Implement typed input errors and validation reports**
+- [x] **Step 3: Implement typed input errors and validation reports**
 
 `src/fortresslab/schema/validation.py`:
 
@@ -1976,7 +1980,7 @@ def load_scenario(path: Path) -> Scenario:
         raise ScenarioInputError(issues) from error
 ```
 
-- [ ] **Step 4: Implement the thin CLI boundary**
+- [x] **Step 4: Implement the thin CLI boundary**
 
 `src/fortresslab/cli.py`:
 
@@ -2040,7 +2044,7 @@ from fortresslab.cli import entrypoint
 entrypoint()
 ```
 
-- [ ] **Step 5: Add the example and user-facing schema contract**
+- [x] **Step 5: Add the example and user-facing schema contract**
 
 `scenarios/examples/minimal-enclosure.json`:
 
@@ -2286,7 +2290,7 @@ uv run fortresslab validate scenarios/examples/minimal-enclosure.json
 uv run fortresslab validate scenarios/examples/minimal-enclosure.json --json
 ```
 
-- [ ] **Step 6: Verify the focused tests and full milestone acceptance**
+- [x] **Step 6: Verify the focused tests and full milestone acceptance**
 
 Run:
 
@@ -2306,7 +2310,7 @@ Expected:
 - source distribution and wheel are created under `dist/`;
 - the CLI exits 0 and emits one JSON object with `valid: true`, `scenario_id: "minimal_enclosure"`, a 64-character lowercase SHA-256 value, and an empty `issues` list.
 
-- [ ] **Step 7: Commit the completed stage-1 vertical slice**
+- [x] **Step 7: Commit the completed stage-1 vertical slice**
 
 ```bash
 git add README.md docs/model scenarios/examples src/fortresslab tests
@@ -2354,4 +2358,6 @@ The stage-1 schemas expose stable inputs for those layers without implementing p
 
 ### Review gate
 
-Before implementation, confirm consent to create `.worktrees/poc-foundation` on branch `feature/poc-foundation`. The current checkout is `main` and contains the user's untracked corrected pitch; isolation prevents foundation work from touching or accidentally committing that file.
+Resolved before implementation: the user explicitly chose direct execution on
+`main`. The temporary empty worktree and feature branch were removed, and all
+foundation commits were made directly on `main`.
