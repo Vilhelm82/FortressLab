@@ -14,3 +14,10 @@ uv run pytest
 uv run ruff check .
 uv run mypy
 ```
+
+## Validate a scenario
+
+```bash
+uv run fortresslab validate scenarios/examples/minimal-enclosure.json
+uv run fortresslab validate scenarios/examples/minimal-enclosure.json --json
+```

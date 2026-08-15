@@ -1,0 +1,143 @@
+{
+  "schema_version": "1.0.0",
+  "scenario_id": "minimal_enclosure",
+  "title": "Minimal enclosure",
+  "coordinate_system": "local_cartesian",
+  "linear_unit": "m",
+  "angular_unit": "deg",
+  "terrain": {
+    "heightfield": {
+      "origin": {"x_m": 0.0, "y_m": 0.0},
+      "cell_spacing_m": 10.0,
+      "elevations_m": [
+        [0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0]
+      ]
+    },
+    "analysis_resolution_m": 1.0,
+    "soils": [
+      {
+        "id": "firm_ground",
+        "label": "Firm ground",
+        "foundation_quality": 0.8,
+        "traversability_multiplier": 1.0
+      }
+    ],
+    "default_soil_id": "firm_ground",
+    "soil_regions": [],
+    "water_regions": []
+  },
+  "materials": [
+    {
+      "id": "stone",
+      "label": "Generic masonry",
+      "abstract_resistance": 1.0,
+      "notes": null
+    }
+  ],
+  "structures": [
+    {
+      "kind": "wall",
+      "id": "south_wall",
+      "path": [{"x_m": 0.0, "y_m": 0.0}, {"x_m": 20.0, "y_m": 0.0}],
+      "height_m": 8.0,
+      "thickness_m": 2.0,
+      "material_id": "stone",
+      "condition": 1.0,
+      "wall_walk_width_m": 1.5
+    },
+    {
+      "kind": "wall",
+      "id": "east_wall",
+      "path": [{"x_m": 20.0, "y_m": 0.0}, {"x_m": 20.0, "y_m": 20.0}],
+      "height_m": 8.0,
+      "thickness_m": 2.0,
+      "material_id": "stone",
+      "condition": 1.0,
+      "wall_walk_width_m": 1.5
+    },
+    {
+      "kind": "wall",
+      "id": "north_wall",
+      "path": [{"x_m": 20.0, "y_m": 20.0}, {"x_m": 0.0, "y_m": 20.0}],
+      "height_m": 8.0,
+      "thickness_m": 2.0,
+      "material_id": "stone",
+      "condition": 1.0,
+      "wall_walk_width_m": 1.5
+    },
+    {
+      "kind": "wall",
+      "id": "west_wall",
+      "path": [{"x_m": 0.0, "y_m": 20.0}, {"x_m": 0.0, "y_m": 0.0}],
+      "height_m": 8.0,
+      "thickness_m": 2.0,
+      "material_id": "stone",
+      "condition": 1.0,
+      "wall_walk_width_m": 1.5
+    },
+    {
+      "kind": "gate",
+      "id": "main_gate",
+      "host_wall_id": "south_wall",
+      "centre": {"x_m": 10.0, "y_m": 0.0},
+      "width_m": 3.0,
+      "traversal_state": "closed",
+      "abstract_resistance": 1.0,
+      "successive_barrier_ids": []
+    }
+  ],
+  "objectives": [
+    {
+      "id": "keep",
+      "location": {"x_m": 10.0, "y_m": 10.0, "z_m": 0.0},
+      "capture_radius_m": 2.0,
+      "priority": 1.0
+    }
+  ],
+  "defensive_positions": [
+    {
+      "id": "gatehouse_position",
+      "location": {"x_m": 10.0, "y_m": 2.0, "z_m": 8.0},
+      "capacity": 12,
+      "weapon_envelope": {
+        "minimum_range_m": 0.0,
+        "maximum_range_m": 100.0,
+        "facing_deg": 180.0,
+        "horizontal_arc_deg": 120.0
+      },
+      "access_node_id": null
+    }
+  ],
+  "observers": [
+    {
+      "id": "south_observer",
+      "location": {"x_m": -10.0, "y_m": -10.0, "z_m": 5.0},
+      "reconnaissance_quality": 0.6
+    }
+  ],
+  "attacker": {
+    "id": "generic_attackers",
+    "label": "Generic attackers",
+    "movement": {
+      "max_slope_deg": 30.0,
+      "minimum_corridor_width_m": 2.0,
+      "maximum_wading_depth_m": 1.0
+    },
+    "engineering": {
+      "can_bridge": true,
+      "maximum_bridge_span_m": 12.0,
+      "can_fill_ditch": true,
+      "can_breach_wall": true,
+      "abstract_breach_capacity": 1.0
+    }
+  },
+  "evaluation": {
+    "seed": 7,
+    "sparse_cell_resolution_m": 1.0,
+    "sparse_chunk_cells": 16,
+    "geometric_epsilon_m": 0.001,
+    "mode": "both"
+  }
+}
